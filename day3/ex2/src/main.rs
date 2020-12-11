@@ -1,6 +1,5 @@
 use std::env;
 use std::fs;
-use std::fmt;
 
 /*
 Okay this one sucks. We're given a grid of # and .
@@ -28,7 +27,7 @@ impl Grid {
     }
 }
 
-fn descend(grid: Grid, slope: Slope) -> usize {
+fn descend(grid: &Grid, slope: Slope) -> usize {
     // Returns count of encountered trees
     let mut trees = 0;
     let mut pos = (0, 0);
@@ -62,12 +61,21 @@ fn main() {
     match env::args().nth(1) {
         None    => panic!("No file provided"),
         Some(p) => {
+            let slopes = vec![
+                (1, 1),
+                (3, 1),
+                (5, 1),
+                (7, 1),
+                (1, 2)
+            ];
             let grid = Grid::new(
                 String::from_utf8(fs::read(p).unwrap()).unwrap()
             );
-            let slope = (3, 1);
-            let trees = descend(grid, slope);
-            println!("Trees encountered: {}", trees);
+            let descents: usize = slopes
+                .into_iter()
+                .map(|s| descend(&grid, s))
+                .product();
+            println!("Trees encountered: {}", descents);
         }
     }
 
